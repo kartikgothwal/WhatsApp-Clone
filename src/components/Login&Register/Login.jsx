@@ -92,7 +92,7 @@ const Login = () => {
       </button>
       <footer className="mt-8  h-full flex flex-col ">
         <button
-          className="bg-white   h-12 shadow-[0_1px_3px_rgba(23,23,23,0.24)] text-white rounded-lg transition-colors duration-300 hover:bg-slate-100 grid grid-cols-[2rem_1fr] px-4 items-center"
+          className="bg-white   h-16 shadow-[0_1px_3px_rgba(23,23,23,0.24)] text-white rounded-lg transition-colors duration-300 hover:bg-slate-100 grid grid-cols-[2rem_1fr] px-4 items-center"
           onClick={handleClickByGoogle}
         >
           <img
@@ -102,6 +102,9 @@ const Login = () => {
           />
           <span className="text-black ">Sign in with Google</span>
         </button>
+        <span className="text-[11px] my-1 text-center">
+          If your forgot your password try signing in with google  
+        </span>
       </footer>
     </>
   );

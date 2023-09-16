@@ -8,7 +8,7 @@ const UserContext = ({ children }) => {
     useremail: "",
     usertoken: "",
   });
-  console.log(UserDetails);
+  // console.log(UserDetails);
   const updateUserDetails = (newData) => {
     SetUserDetails((prevData) => {
       return {

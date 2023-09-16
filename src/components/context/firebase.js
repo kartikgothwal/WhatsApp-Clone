@@ -1,3 +1,4 @@
+import { CloseFullscreen } from "@mui/icons-material";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -14,6 +15,9 @@ import {
   addDoc,
   deleteDoc,
   updateDoc,
+  onSnapshot,
+  query,
+  where,
 } from "firebase/firestore";
 import { createContext, useContext } from "react";
 
@@ -26,7 +30,53 @@ const firebaseConfig = {
   messagingSenderId: "451298491523",
   appId: "1:451298491523:web:071fc940a4ccef5111efb6",
 };
-
+// FriendsDocs
+const Friends = [
+  {
+    name: "Elon Musk",
+    profileImg:
+      "https://bloximages.chicago2.vip.townnews.com/thestar.com/content/tncms/assets/v3/editorial/5/96/5962d58c-00ad-5a9a-a1da-adad2ca6a127/6447ca23291e4.image.jpg?resize=1200%2C812",
+    ID: "3TCH2X9mTA8jrtT1iCyn",
+  },
+  {
+    name: "Jeff Bezoz",
+    profileImg:
+      "https://e3.365dm.com/21/07/1600x900/skynews-jeff-bezos-amazon_5437859.jpg?20210705134847",
+    ID: "eDbEBGwffVRjI0pvoIkD",
+  },
+  {
+    name: "Narendra Modi",
+    profileImg:
+      "https://i1.sndcdn.com/avatars-000647693748-k3ef4g-t500x500.jpg",
+    ID: "cnRAKoXsb0J6xvRoo41J",
+  },
+  {
+    name: "Mark Zuckerberg",
+    profileImg: "https://i.kym-cdn.com/photos/images/newsfeed/002/363/222/a71",
+    ID: "ID60NH6goXOx402PsW8i",
+  },
+];
+//AddingFriends List
+const AddFriendsListToUser = async (user, username) => {
+  const CollectionRef = collection(database, "users");
+  await addDoc(CollectionRef, {
+    username: username,
+    userID: user.localId,
+    useremail: user.email,
+    usertoken: user.idToken,
+  }).then((response) => {
+    Friends.forEach((data) => {
+      const SubCollectionRef = collection(
+        database,
+        `users/${response.id}/friends`
+      );
+      addDoc(SubCollectionRef, {
+        ...data,
+      });
+    });
+    alert(`Welcome ${username} `);
+  });
+};
 //firebase methods
 const CreateUser = async (userdata, updateUserDetails, navigate) => {
   try {
@@ -42,14 +92,14 @@ const CreateUser = async (userdata, updateUserDetails, navigate) => {
       useremail: user.email,
       usertoken: user.idToken,
     });
-    const doc = addDoc(database, "users", {});
-    alert(`Welcome ${userdata.username} `);
+    AddFriendsListToUser(user, userdata.username);
     navigate("/mainpage");
   } catch (error) {
     alert(error.message);
   }
 };
-const AccountByGoogle = (updateUserDetails, navigate) => {
+const AccountByGoogle = async (updateUserDetails, navigate) => {
+  const UserCollectionRef = collection(database, "users");
   const Provider = new GoogleAuthProvider();
   signInWithPopup(auth, Provider)
     .then((response) => {
@@ -60,7 +110,18 @@ const AccountByGoogle = (updateUserDetails, navigate) => {
         useremail: user.email,
         usertoken: user.idToken,
       });
-      alert(`Welcome ${user.fullName} `);
+      const q = query(UserCollectionRef, where("useremail", "==", user.email));
+      getDocs(q)
+        .then((response) => {
+          const choice = response.docs.length ? false : true;
+          if (choice) {
+            AddFriendsListToUser(user, user.fullName);
+          }
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+
       navigate("/mainpage");
     })
     .catch((error) => {

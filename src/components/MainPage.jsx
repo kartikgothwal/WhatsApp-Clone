@@ -2,15 +2,16 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useUserContext } from "./context/UserContext";
 import { useNavigate } from "react-router-dom";
+import UserMainPage from "./UserMainPage";
 const MainPage = () => {
   const { UserDetails } = useUserContext();
   const navigate = useNavigate();
   return (
     <>
       {UserDetails.userID ? (
-        <div>
-          <h1>hello, {UserDetails.username}</h1>
-        </div>
+        <>
+          <UserMainPage />
+        </>
       ) : (
         <div className="h-screen flex flex-col justify-start gap-8 p-[5rem]">
           <h1 className="text-5xl font-bold font-custom"> Access Denied </h1>

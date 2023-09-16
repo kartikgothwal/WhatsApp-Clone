@@ -11,10 +11,10 @@ const SignInPage = () => {
   return (
     <>
       <section className="p-[3rem] h-screen bg-emerald-200 overflow-hidden">
-        <div className="  shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden rounded-md bg-white h-full grid grid-cols-[30rem_1fr] ">
-          <main className="  grid grid-rows-[8rem_repeat(1,1fr)]">
-            <header className="  bg-zinc-600 text-white grid grid-rows-1 items-center justify-center ">
-              <div className="  flex justify-center">
+        <div className=" shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden rounded-md bg-white h-full grid grid-cols-[30rem_1fr] ">
+          <main className=" grid grid-rows-[8rem_repeat(1,1fr)]">
+            <header className=" bg-zinc-600 text-white grid grid-rows-1 items-center justify-center ">
+              <div className=" flex justify-center">
                 <img
                   src="https://richestsoft.com/images/angular-images/whatsappclone-logo.webp"
                   alt="logo"
@@ -49,7 +49,7 @@ const SignInPage = () => {
                   Sign up
                 </button>
               </div>
-              <form className=" grid py-7 px-16 font-mycustomfontRubik grid-rows-[4rem_4rem_4rem_4rem] gap-3 items-center justify-center ">
+              <form className=" grid py-7 px-16 font-mycustomfontRubik grid-rows-[4rem_4rem_4rem_4rem] gap-3 items-center justify-center h-full ">
                 {btnChoice === "signup" ? <SignUp /> : <Login />}
               </form>
             </main>
