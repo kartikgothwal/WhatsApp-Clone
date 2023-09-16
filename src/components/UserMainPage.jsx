@@ -3,7 +3,11 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import DataSaverOffIcon from "@mui/icons-material/DataSaverOff";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-
+import SearchIcon from "@mui/icons-material/Search";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ClearIcon from "@mui/icons-material/Clear";
 const UserMainPage = () => {
   return (
     <>
@@ -54,7 +58,31 @@ const UserMainPage = () => {
                 />
               </div>
             </header>
-            <aside className="h-full">  </aside>
+            <aside className=" justify-center items-center pl-3  pr-0 h-full grid grid-cols-[repeat(1,1fr)_3rem]">
+              <div
+                className=" h-[2.5rem] rounded-[8px]  pl-4"
+                style={{
+                  background: "#f0f2f5",
+                }}
+              >
+                <SearchIcon className="cursor-pointer text-gray-500"  style={{
+                      fontSize: "19px",
+                }} />
+                <input
+                  type="text"
+                  placeholder="Search or start a new chat"
+                  className="pl-5 outline-none w-[19rem] bg-transparent text-gray-500  text-sm pt-[10px]  items-center"
+                />
+                <ClearIcon className="cursor-pointer text-gray-500  " style={{
+                      fontSize: "18px",
+                }} />
+              </div>
+              <FilterListIcon
+                style={{
+                  marginLeft: "10px",
+                }}
+              />
+            </aside>
             <div className="h-full"></div>
           </section>
           <section className="h-full border border-black"></section>

@@ -101,32 +101,32 @@ const CreateUser = async (userdata, updateUserDetails, navigate) => {
 const AccountByGoogle = async (updateUserDetails, navigate) => {
   const UserCollectionRef = collection(database, "users");
   const Provider = new GoogleAuthProvider();
-  signInWithPopup(auth, Provider)
-    .then((response) => {
-      const user = response._tokenResponse;
-      updateUserDetails({
-        username: user.fullName,
-        userID: user.localId,
-        useremail: user.email,
-        usertoken: user.idToken,
-      });
-      const q = query(UserCollectionRef, where("useremail", "==", user.email));
-      getDocs(q)
-        .then((response) => {
-          const choice = response.docs.length ? false : true;
-          if (choice) {
-            AddFriendsListToUser(user, user.fullName);
-          }
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
 
-      navigate("/mainpage");
-    })
-    .catch((error) => {
-      alert(error.message);
+  try {
+    const response = await signInWithPopup(auth, Provider);
+    const user = response._tokenResponse;
+
+    // Update user details
+    updateUserDetails({
+      username: user.fullName,
+      userID: user.localId,
+      useremail: user.email,
+      usertoken: user.idToken,
     });
+
+    const q = query(UserCollectionRef, where("useremail", "==", user.email));
+    const querySnapshot = await getDocs(q);
+
+    const choice = querySnapshot.docs.length === 0; // Simplified condition
+    if (choice) {
+      await AddFriendsListToUser(user, user.fullName); // Assuming AddFriendsListToUser is an async function
+    }
+
+    navigate("/mainpage");
+  } catch (error) {
+    console.error(error.message);
+    alert(error.message);
+  }
 };
 
 const UserLogin = async (userData, updateUserDetails, navigate) => {
