@@ -3,6 +3,7 @@ const userDataContext = createContext();
 
 const UserContext = ({ children }) => {
   const [UserDetails, SetUserDetails] = useState({
+    username: "",
     userID: "",
     useremail: "",
     usertoken: "",
@@ -11,7 +12,6 @@ const UserContext = ({ children }) => {
   const updateUserDetails = (newData) => {
     SetUserDetails((prevData) => {
       return {
-        ...prevData,
         ...newData,
       };
     });

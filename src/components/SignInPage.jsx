@@ -49,7 +49,7 @@ const SignInPage = () => {
                   Sign up
                 </button>
               </div>
-              <form className=" grid py-7 px-16 font-mycustomfontRubik grid-rows-[4rem_4rem_4rem_4rem] gap-6 items-center justify-center ">
+              <form className=" grid py-7 px-16 font-mycustomfontRubik grid-rows-[4rem_4rem_4rem_4rem] gap-3 items-center justify-center ">
                 {btnChoice === "signup" ? <SignUp /> : <Login />}
               </form>
             </main>

@@ -1,4 +1,3 @@
-import { CloseFullscreen } from "@mui/icons-material";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -7,6 +6,15 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  getDoc,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { createContext, useContext } from "react";
 
 // Your web app's Firebase configuration
@@ -29,11 +37,13 @@ const CreateUser = async (userdata, updateUserDetails, navigate) => {
     );
     const user = response._tokenResponse;
     updateUserDetails({
+      username: userdata.username,
       userID: user.localId,
-      email: user.email,
+      useremail: user.email,
       usertoken: user.idToken,
     });
-    alert("Login successfull");
+    const doc = addDoc(database, "users", {});
+    alert(`Welcome ${userdata.username} `);
     navigate("/mainpage");
   } catch (error) {
     alert(error.message);
@@ -45,10 +55,36 @@ const AccountByGoogle = (updateUserDetails, navigate) => {
     .then((response) => {
       const user = response._tokenResponse;
       updateUserDetails({
+        username: user.fullName,
         userID: user.localId,
-        email: user.email,
+        useremail: user.email,
         usertoken: user.idToken,
       });
+      alert(`Welcome ${user.fullName} `);
+      navigate("/mainpage");
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+};
+
+const UserLogin = async (userData, updateUserDetails, navigate) => {
+  console.log(userData);
+  await signInWithEmailAndPassword(
+    auth,
+    userData.loginemail,
+    userData.loginpassword
+  )
+    .then((response) => {
+      const user = response._tokenResponse;
+      updateUserDetails({
+        username: user.fullName,
+        userID: user.localId,
+        useremail: user.email,
+        usertoken: user.idToken,
+      });
+      alert(`Welcome Back `);
+      navigate("/mainpage");
     })
     .catch((error) => {
       alert(error.message);
@@ -58,13 +94,16 @@ const AccountByGoogle = (updateUserDetails, navigate) => {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const database = getFirestore(app);
 
 const firebaseContext = createContext();
 
 const FirebaseProvider = ({ children }) => {
   return (
     <>
-      <firebaseContext.Provider value={{ CreateUser, AccountByGoogle }}>
+      <firebaseContext.Provider
+        value={{ CreateUser, AccountByGoogle, UserLogin }}
+      >
         {children}
       </firebaseContext.Provider>
     </>

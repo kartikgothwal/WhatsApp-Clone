@@ -3,14 +3,15 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useFirebaseContext } from "../context/firebase";
 import { useUserContext } from "../context/UserContext";
-
 import { useNavigate } from "react-router-dom";
+
 const SignUp = () => {
   const { CreateUser, AccountByGoogle } = useFirebaseContext();
   const navigate = useNavigate();
   const { updateUserDetails } = useUserContext();
   const [visibility, setVisibility] = useState(false);
   const [userData, setUserData] = useState({
+    username: "",
     email: "",
     password: "",
   });
@@ -24,24 +25,34 @@ const SignUp = () => {
   };
   const handleClick = (e) => {
     e.preventDefault();
-    if (!userData.email || !userData.password) {
+    if (!userData.username || !userData.password) {
       alert("Please complete the fields");
       return;
     }
     CreateUser(userData, updateUserDetails, navigate);
   };
+
   const handleClickByGoogle = (e) => {
     e.preventDefault();
-    if (!userData.email || !userData.password) {
-      alert("Please complete the fields");
-      return;
-    }
     AccountByGoogle(updateUserDetails, navigate);
   };
   return (
     <>
-    
-      <div className=" w-[20rem] gap-4  flex flex-col">
+      <div className=" w-[20rem] gap-[0.4rem] flex flex-col">
+        <label htmlFor="username">
+          Fullname <span className="text-red-800">*</span>
+        </label>
+        <input
+          type="text"
+          className="font-textColor outline-none bg-transparent border-1 border-black border-b-2"
+          name="username"
+          id="username"
+          value={userData.username}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div className=" w-[20rem] gap-[0.4rem]  flex flex-col">
         <label htmlFor="email">
           Email Address <span className="text-red-800">*</span>
         </label>
@@ -55,7 +66,7 @@ const SignUp = () => {
           required
         />
       </div>
-      <div className="w-[20rem] gap-4 flex flex-col">
+      <div className="w-[20rem] gap-[0.4rem] flex flex-col">
         <label htmlFor="password">
           Password <span className="text-red-800">*</span>
         </label>
@@ -92,14 +103,14 @@ const SignUp = () => {
         </div>
       </div>
       <button
-        className="bg-green-500 h-12 mt-10 shadow-[0_1px_3px_rgba(23,23,23,0.24)] text-white rounded-lg transition-colors duration-300 hover:bg-green-700"
+        className="bg-green-500 h-12  shadow-[0_1px_3px_rgba(23,23,23,0.24)] text-white rounded-lg transition-colors duration-300 hover:bg-green-700"
         onClick={handleClick}
       >
         Sign up
       </button>
       <footer className="  h-full flex flex-col">
         <button
-          className="bg-white my-2 h-12 shadow-[0_1px_3px_rgba(23,23,23,0.24)] text-white rounded-lg transition-colors duration-300 hover:bg-slate-100 grid grid-cols-[2rem_1fr] px-4 items-center"
+          className="bg-white  h-12 shadow-[0_1px_3px_rgba(23,23,23,0.24)] text-white rounded-lg transition-colors duration-300 hover:bg-slate-100 grid grid-cols-[2rem_1fr] px-4 items-center"
           onClick={handleClickByGoogle}
         >
           <img

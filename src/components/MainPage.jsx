@@ -9,7 +9,7 @@ const MainPage = () => {
     <>
       {UserDetails.userID ? (
         <div>
-          <h1>hello, {UserDetails.email}</h1>
+          <h1>hello, {UserDetails.username}</h1>
         </div>
       ) : (
         <div className="h-screen flex flex-col justify-start gap-8 p-[5rem]">
