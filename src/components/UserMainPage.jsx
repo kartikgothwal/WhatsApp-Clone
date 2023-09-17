@@ -9,6 +9,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ClearIcon from "@mui/icons-material/Clear";
+import DuoIcon from "@mui/icons-material/Duo";
+
 import "../App.css";
 const UserMainPage = () => {
   return (
@@ -354,13 +356,51 @@ const UserMainPage = () => {
             }}
           >
             <header
-              className=" border z-100 bg border-black "
+              className=" z-100  grid grid-cols-[7rem_repeat(1,1fr)]"
               style={{
                 background: "#f0f2f5",
               }}
-            ></header>
+            >
+              <figure className=" pl-[2rem] w-[5rem] h-full flex items-center justify-center">
+                <img
+                  src="https://pps.whatsapp.net/v/t61.24694-24/369575505_693071492690114_4103489596512533221_n.jpg?stp=dst-jpg_s96x96&ccb=11-4&oh=01_AdRWSVux9RZVqYAGn-KpyzZwe3JHIv4-pOTRLTkrAP_LuA&oe=651444C9&_nc_sid=000000&_nc_cat=106"
+                  alt="user_img"
+                  className="rounded-[40px] h-[3rem]"
+                />
+              </figure>
+              <div className="flex justify-end items-center h-full w-full pr-6 gap-10">
+                <DuoIcon
+                  style={{
+                    color: "#54656f",
+                    // color: "#ffffff",
+                    fontSize: "40px",
+                    cursor: "pointer",
+                    border: "1px solid #54656f",
+                    padding: "4px 15px ",
+                    width: "5rem",
+                    borderRadius: "20px",
+                  }}
+                />
+                <SearchIcon
+                  style={{
+                    color: "#54656f",
+                    // color: "#ffffff",
+                    fontSize: "25px",
+                    cursor: "pointer",
+                  }}
+                />
+                <MoreVertIcon
+                  style={{
+                    color: "#54656f",
+                    // color: "#ffffff",
+                    fontSize: "25px",
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
+            </header>
 
-            <main className="border relative w-full z-10 opacity-[0.4] border-black bg-center bg-no-repeat bg-cover">
+            <main className="relative w-full z-10 opacity-[0.4] bg-center bg-no-repeat bg-cover">
               <div className="absolute w-full z-10 top-0 left-0 custom-background h-full overflow-hidden"></div>
             </main>
 
