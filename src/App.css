@@ -3,3 +3,21 @@
   padding: 0px;
   box-sizing: border-box;
 }
+.scroller_property::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroller_property::-webkit-scrollbar-track {
+  background-color: rgb(255, 255, 255);
+}
+
+.scroller_property::-webkit-scrollbar-thumb {
+  background: #dcd6d5;
+  border-radius: 25px;
+}
+.custom-background {
+  background-image: url("https://i.pinimg.com/564x/8c/98/99/8c98994518b575bfd8c949e91d20548b.jpg");
+  background-repeat: repeat;
+  opacity: 0.3;
+  background-color: #efeae2; /* This sets a fallback color */
+}
