@@ -360,8 +360,8 @@ const UserMainPage = () => {
               }}
             ></header>
 
-            <main className="border w-full z-10 opacity-[0.4] border-black bg-center bg-no-repeat bg-cover">
-              <div className="absolute z-10 top-0 left-0 custom-background h-full overflow-hidden"></div>
+            <main className="border relative w-full z-10 opacity-[0.4] border-black bg-center bg-no-repeat bg-cover">
+              <div className="absolute w-full z-10 top-0 left-0 custom-background h-full overflow-hidden"></div>
             </main>
 
             <div className="border  border-black"></div>
