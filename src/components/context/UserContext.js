@@ -3,12 +3,13 @@ const userDataContext = createContext();
 
 const UserContext = ({ children }) => {
   const [UserDetails, SetUserDetails] = useState({
+    userDocID: "",
     username: "",
     userID: "",
     useremail: "",
     usertoken: "",
   });
-  // console.log(UserDetails);
+  // console.log("heyy", UserDetails);
   const updateUserDetails = (newData) => {
     SetUserDetails((prevData) => {
       return {

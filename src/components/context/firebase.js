@@ -8,6 +8,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import {
+  doc,
   getFirestore,
   collection,
   getDoc,
@@ -35,13 +36,13 @@ const Friends = [
   {
     name: "Elon Musk",
     profileImg:
-      "https://bloximages.chicago2.vip.townnews.com/thestar.com/content/tncms/assets/v3/editorial/5/96/5962d58c-00ad-5a9a-a1da-adad2ca6a127/6447ca23291e4.image.jpg?resize=1200%2C812",
+      "https://i.pinimg.com/736x/df/61/a1/df61a19237753b3064071972b3856043.jpg",
     ID: "3TCH2X9mTA8jrtT1iCyn",
   },
   {
     name: "Jeff Bezoz",
     profileImg:
-      "https://e3.365dm.com/21/07/1600x900/skynews-jeff-bezos-amazon_5437859.jpg?20210705134847",
+      "https://hips.hearstapps.com/hmg-prod/images/jeff-bezos-attends-the-lord-of-the-rings-the-rings-of-power-news-photo-1684851576.jpg?crop=1.00xw:0.861xh;0,0.0205xh&resize=1200:*",
     ID: "eDbEBGwffVRjI0pvoIkD",
   },
   {
@@ -54,6 +55,30 @@ const Friends = [
     name: "Mark Zuckerberg",
     profileImg: "https://i.kym-cdn.com/photos/images/newsfeed/002/363/222/a71",
     ID: "ID60NH6goXOx402PsW8i",
+  },
+];
+
+//InitialMessages
+const InitialMessages = [
+  {
+    id: "",
+    message: "Come to Mars with me",
+  },
+  {
+    id: "",
+    message: "Dont go with elon",
+  },
+  {
+    id: "",
+    message: "Mitro, aache din is loading",
+  },
+  {
+    id: "",
+    message: "Mitro, aache din is loading",
+  },
+  {
+    id: "",
+    message: "Trust me, Thread is better than Twitter",
   },
 ];
 //AddingFriends List
@@ -72,11 +97,14 @@ const AddFriendsListToUser = async (user, username) => {
       );
       addDoc(SubCollectionRef, {
         ...data,
-      });
+      }).then((response)=>{
+        
+      })
     });
     alert(`Welcome ${username} `);
   });
 };
+
 //firebase methods
 const CreateUser = async (userdata, updateUserDetails, navigate) => {
   try {
@@ -101,11 +129,9 @@ const CreateUser = async (userdata, updateUserDetails, navigate) => {
 const AccountByGoogle = async (updateUserDetails, navigate) => {
   const UserCollectionRef = collection(database, "users");
   const Provider = new GoogleAuthProvider();
-
   try {
     const response = await signInWithPopup(auth, Provider);
     const user = response._tokenResponse;
-
     // Update user details
     updateUserDetails({
       username: user.fullName,
@@ -117,11 +143,10 @@ const AccountByGoogle = async (updateUserDetails, navigate) => {
     const q = query(UserCollectionRef, where("useremail", "==", user.email));
     const querySnapshot = await getDocs(q);
 
-    const choice = querySnapshot.docs.length === 0; // Simplified condition
+    const choice = querySnapshot.docs.length === 0;
     if (choice) {
-      await AddFriendsListToUser(user, user.fullName); // Assuming AddFriendsListToUser is an async function
+      await AddFriendsListToUser(user, user.fullName);
     }
-
     navigate("/mainpage");
   } catch (error) {
     console.error(error.message);
@@ -130,7 +155,6 @@ const AccountByGoogle = async (updateUserDetails, navigate) => {
 };
 
 const UserLogin = async (userData, updateUserDetails, navigate) => {
-  console.log(userData);
   await signInWithEmailAndPassword(
     auth,
     userData.loginemail,
@@ -152,10 +176,46 @@ const UserLogin = async (userData, updateUserDetails, navigate) => {
     });
 };
 
+const GetUser = (SetCurrentUserData, UserDetails, SetAllFriends) => {
+  const CollectionRef = collection(database, "users");
+  const q = query(
+    CollectionRef,
+    where("useremail", "==", UserDetails.useremail)
+  );
+  getDocs(q)
+    .then((response) => {
+      const data = response.docs.map((items) => {
+        return { ...items.data(), id: items.id };
+      });
+      const user = data[0];
+      GetAllFriends(user, SetAllFriends);
+      SetCurrentUserData(user);
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+};
+const GetAllFriends = async (CurrentUserData, SetAllFriends) => {
+  const CollectionRef = collection(
+    database,
+    `users/${CurrentUserData.id}/friends`
+  );
+  await getDocs(CollectionRef)
+    .then((response) => {
+      const friends = response.docs.map((items) => {
+        return { ...items.data(), id: items.id };
+      });
+      SetAllFriends(friends);
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+};
+
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getFirestore(app);
+export const auth = getAuth(app);
+export const database = getFirestore(app);
 
 const firebaseContext = createContext();
 
@@ -163,7 +223,13 @@ const FirebaseProvider = ({ children }) => {
   return (
     <>
       <firebaseContext.Provider
-        value={{ CreateUser, AccountByGoogle, UserLogin }}
+        value={{
+          CreateUser,
+          AccountByGoogle,
+          UserLogin,
+          GetUser,
+          GetAllFriends,
+        }}
       >
         {children}
       </firebaseContext.Provider>
