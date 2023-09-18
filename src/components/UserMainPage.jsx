@@ -15,9 +15,11 @@ import "../App.css";
 import { useUserContext } from "./context/UserContext";
 import { useFirebaseContext } from "./context/firebase";
 import SendIcon from "@mui/icons-material/Send";
-
+import { database } from "./context/firebase";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 const UserMainPage = () => {
-  const { GetUser, GetMessages, SendMessage } = useFirebaseContext();
+  const { GetUser, GetMessages, SendMessage, GetLastMessages } =
+    useFirebaseContext();
   const [CurrentUserData, SetCurrentUserData] = useState({});
   const { UserDetails } = useUserContext();
   const friendChoice = useRef([]);
@@ -28,22 +30,19 @@ const UserMainPage = () => {
     id: "",
     message: "",
   });
-
+  const [lastMessages, SetLastMessages] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
-        const userData = await GetUser(
-          SetCurrentUserData,
-          UserDetails,
-          SetAllFriends
-        );
+        await GetUser(SetCurrentUserData, UserDetails, SetAllFriends);
+        // await GetLastMessages(CurrentUserData, AllFriends, setNewuserMessages);
       } catch (error) {
         alert("Error fetching data:", error);
       }
     }
     fetchData();
   }, [UserDetails]);
-
+  console.log(lastMessages);
   const updateRef = (index) => (ref) => {
     friendChoice.current[index] = ref;
   };
@@ -59,6 +58,7 @@ const UserMainPage = () => {
       };
     });
   };
+
   const HandleSendMessaeBtn = (e) => {
     e.preventDefault();
     if (!NewUserMessages.message || !NewUserMessages.id) {
@@ -82,8 +82,27 @@ const UserMainPage = () => {
     const dateData = dateHours + ":" + dateMinute;
 
     SendMessage(CurrentUserData, Friend, NewUserMessages, dateData);
+
+    const CollectionRef = collection(
+      database,
+      `users/${CurrentUserData.id}/friends/${Friend.id}/messages`
+    );
+    const orderedCollectionRef = query(CollectionRef, orderBy("timestamp"));
+    onSnapshot(orderedCollectionRef, (data) => {
+      SetMessages(
+        data.docs.map((items) => {
+          return { ...items.data() };
+        })
+      );
+    });
+    setNewuserMessages((prevData) => {
+      return {
+        ...prevData,
+        message: "",
+      };
+    });
   };
-  console.log("friend", Friend);
+
   return (
     <>
       {CurrentUserData.id && AllFriends.length ? (
@@ -269,7 +288,6 @@ const UserMainPage = () => {
                 <div className="relative h-full w-full px-10 py-2">
                   <div className="relative flex items-end flex-col gap-2 h-full w-full">
                     {Messages.map((messageData, index) => {
-                      console.log(messageData);
                       return (
                         <div
                           key={index}

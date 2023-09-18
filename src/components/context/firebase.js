@@ -191,7 +191,12 @@ const UserLogin = async (userData, updateUserDetails, navigate) => {
     });
 };
 
-const GetUser = (SetCurrentUserData, UserDetails, SetAllFriends) => {
+const GetUser = (
+  SetCurrentUserData,
+  UserDetails,
+  SetAllFriends,
+  SetLastMessages
+) => {
   const CollectionRef = collection(database, "users");
   const q = query(
     CollectionRef,
@@ -210,6 +215,25 @@ const GetUser = (SetCurrentUserData, UserDetails, SetAllFriends) => {
     .catch((error) => {
       alert(error.message);
     });
+};
+const GetLastMessages = (CurrentUserData, AllFriends, setNewuserMessages) => {
+  try {
+    AllFriends.map((Friend) => {
+      const CollectionRef = collection(
+        database,
+        `users/${CurrentUserData.id}/friends/${Friend.id}/message`
+      );
+      getDocs(CollectionRef).then((response) => {
+        setNewuserMessages(
+          response.docs.map((items) => {
+            return { ...items.data() };
+          })
+        );
+      });
+    });
+  } catch (error) {
+    alert(error.message);
+  }
 };
 const GetAllFriends = async (CurrentUserData, SetAllFriends) => {
   const CollectionRef = collection(
@@ -243,7 +267,7 @@ const GetMessages = (SetMessages, friendInfo, CurrentUserData) => {
           messageID: items.id,
         };
       });
-      console.log(MessageData);
+
       SetMessages(MessageData);
     })
     .catch((error) => {
@@ -252,7 +276,6 @@ const GetMessages = (SetMessages, friendInfo, CurrentUserData) => {
 };
 
 const SendMessage = (CurrentUserData, Friend, NewUserMessages, dateData) => {
-  console.log("inside");
   try {
     const CollectionRef = collection(
       database,
