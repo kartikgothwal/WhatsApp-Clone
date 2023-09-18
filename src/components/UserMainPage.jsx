@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GroupsIcon from "@mui/icons-material/Groups";
 import DataSaverOffIcon from "@mui/icons-material/DataSaverOff";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ClearIcon from "@mui/icons-material/Clear";
 import DuoIcon from "@mui/icons-material/Duo";
-
+import MoodIcon from "@mui/icons-material/Mood";
+import AddIcon from "@mui/icons-material/Add";
+import MicIcon from "@mui/icons-material/Mic";
 import "../App.css";
 const UserMainPage = () => {
+  // const [User, SetUser] = useState({});
+  useEffect(()=>{
+
+  })
   return (
     <>
       <section className="h-screen p-8 bg-gray-200 ">
@@ -356,7 +360,7 @@ const UserMainPage = () => {
             }}
           >
             <header
-              className=" z-100  grid grid-cols-[7rem_repeat(1,1fr)]"
+              className=" z-100  grid grid-cols-[7rem_7rem_repeat(1,1fr)]"
               style={{
                 background: "#f0f2f5",
               }}
@@ -365,9 +369,13 @@ const UserMainPage = () => {
                 <img
                   src="https://pps.whatsapp.net/v/t61.24694-24/369575505_693071492690114_4103489596512533221_n.jpg?stp=dst-jpg_s96x96&ccb=11-4&oh=01_AdRWSVux9RZVqYAGn-KpyzZwe3JHIv4-pOTRLTkrAP_LuA&oe=651444C9&_nc_sid=000000&_nc_cat=106"
                   alt="user_img"
-                  className="rounded-[40px] h-[3rem]"
+                  className="rounded-[40px] h-[2.8rem]"
                 />
               </figure>
+              <div className="flex flex-col justify-center ">
+                <h1>Kartik Gothwal</h1>
+                <p className="text-gray-500 text-sm">Melllpo</p>
+              </div>
               <div className="flex justify-end items-center h-full w-full pr-6 gap-10">
                 <DuoIcon
                   style={{
@@ -400,11 +408,60 @@ const UserMainPage = () => {
               </div>
             </header>
 
-            <main className="relative w-full z-10 opacity-[0.4] bg-center bg-no-repeat bg-cover">
+            <main className="relative w-full z-10 opacity-[0.4] bg-center  bg-no-repeat bg-cover">
               <div className="absolute w-full z-10 top-0 left-0 custom-background h-full overflow-hidden"></div>
+              <div role="row" className="  z-50  w-full">
+                <p
+                  className=" inline-block relative z-50 px-5 py-1 bg-opacity-100 rounded-lg bg-orange-300"
+                  style={{
+                    backgroundColor: "#d1f4cc",
+                    color: "black",
+                  }}
+                >
+                  Helllo
+                </p>
+              </div>
             </main>
 
-            <div className="border  border-black"></div>
+            <div
+              className="grid grid-cols-[7rem_repeat(1,1fr)_5rem]"
+              style={{
+                background: "#f0f2f5",
+              }}
+            >
+              <div className="flex justify-evenly items-center ">
+                <MoodIcon
+                  style={{
+                    color: "#54656f",
+                    fontSize: "30px",
+                    cursor: "pointer",
+                  }}
+                />
+                <AddIcon
+                  style={{
+                    color: "#54656f",
+                    fontSize: "30px",
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
+              <div className=" justify-center flex items-center ">
+                <input
+                  type="text"
+                  placeholder="Type a message"
+                  className="bg-white w-full h-11 px-5 rounded-xl outline-none text-sm text-gray-800"
+                />
+              </div>
+              <div className="flex items-center justify-center">
+                <MicIcon
+                  style={{
+                    color: "#54656f",
+                    fontSize: "30px",
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
+            </div>
           </section>
         </main>
       </section>
