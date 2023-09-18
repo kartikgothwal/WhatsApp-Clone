@@ -1,4 +1,3 @@
-import { CloseFullscreen } from "@mui/icons-material";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -66,11 +65,7 @@ const InitialMessages = [
   },
   {
     id: "",
-    message: "Dont go with elon",
-  },
-  {
-    id: "",
-    message: "Mitro, aache din is loading",
+    message: "Don't go with elon",
   },
   {
     id: "",
@@ -79,6 +74,10 @@ const InitialMessages = [
   {
     id: "",
     message: "Trust me, Thread is better than Twitter",
+  },
+  {
+    id: "",
+    message: "Mitro, aache din is loading",
   },
 ];
 //AddingFriends List
@@ -90,16 +89,23 @@ const AddFriendsListToUser = async (user, username) => {
     useremail: user.email,
     usertoken: user.idToken,
   }).then((response) => {
-    Friends.forEach((data) => {
+    Friends.map((data, index) => {
       const SubCollectionRef = collection(
         database,
         `users/${response.id}/friends`
       );
       addDoc(SubCollectionRef, {
         ...data,
-      }).then((response)=>{
-        
-      })
+      }).then((friendsResponse) => {
+        const SubSubCollectionRef = collection(
+          database,
+          `users/${response.id}/friends/${friendsResponse.id}/messages`
+        );
+        const MsgData = InitialMessages[index];
+        addDoc(SubSubCollectionRef, {
+          ...MsgData,
+        });
+      });
     });
     alert(`Welcome ${username} `);
   });
@@ -212,6 +218,26 @@ const GetAllFriends = async (CurrentUserData, SetAllFriends) => {
     });
 };
 
+const GetMessages = (SetMessages, friendInfo, CurrentUserData) => {
+  const CollectionRef = collection(
+    database,
+    `users/${CurrentUserData.id}/friends/${friendInfo.id}/messages`
+  );
+  getDocs(CollectionRef)
+    .then((response) => {
+      const MessageData = response.docs.map((items) => {
+        return {
+          ...items.data(),
+          id: items.id,
+        };
+      });
+      SetMessages(MessageData);
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+};
+
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
@@ -229,6 +255,7 @@ const FirebaseProvider = ({ children }) => {
           UserLogin,
           GetUser,
           GetAllFriends,
+          GetMessages,
         }}
       >
         {children}

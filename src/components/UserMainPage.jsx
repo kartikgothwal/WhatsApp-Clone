@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GroupsIcon from "@mui/icons-material/Groups";
 import DataSaverOffIcon from "@mui/icons-material/DataSaverOff";
 import AddCommentIcon from "@mui/icons-material/AddComment";
@@ -15,11 +15,19 @@ import "../App.css";
 import { useUserContext } from "./context/UserContext";
 import { useFirebaseContext } from "./context/firebase";
 import { CloseFullscreen } from "@mui/icons-material";
+import SendIcon from "@mui/icons-material/Send";
+import { prettyFormat } from "@testing-library/react";
 const UserMainPage = () => {
-  const { GetUser, GetAllFriends } = useFirebaseContext();
+  const { GetUser, GetMessages } = useFirebaseContext();
   const [CurrentUserData, SetCurrentUserData] = useState({});
   const { UserDetails } = useUserContext();
+  const friendChoice = useRef([]);
   const [AllFriends, SetAllFriends] = useState([]);
+  const [Messages, SetMessages] = useState([]);
+  const [NewUserMessages, setNewuserMessages] = useState({
+    id: "",
+    message: "",
+  });
   useEffect(() => {
     async function fetchData() {
       try {
@@ -36,6 +44,21 @@ const UserMainPage = () => {
     fetchData();
   }, [UserDetails]);
 
+  const updateRef = (index) => (ref) => {
+    friendChoice.current[index] = ref;
+  };
+  const handleChatRequestClick = (index) => {
+    GetMessages(SetMessages, AllFriends[index], CurrentUserData);
+  };
+  const HandleMessageInputChange = (e) => {
+    setNewuserMessages((prevData) => {
+      return {
+        ...prevData,
+        [e.target.name]: e.target.value,
+        id: CurrentUserData.id,
+      };
+    });
+  };
   return (
     <>
       {CurrentUserData.id && AllFriends.length ? (
@@ -122,7 +145,14 @@ const UserMainPage = () => {
               <div className="h-full overflow-auto scroller_property">
                 {AllFriends.map((friendsItems, index) => {
                   return (
-                    <article className="  w-full flex h-[72px] cursor-pointer hover:bg-gray-100  ">
+                    <article
+                      key={index}
+                      ref={updateRef(index)}
+                      className="w-full flex h-[72px] cursor-pointer hover:bg-gray-100"
+                      onClick={() => {
+                        handleChatRequestClick(index);
+                      }}
+                    >
                       <figure className="overflow-hidden pl-[5px] w-[5rem] h-full flex items-center justify-center">
                         <img
                           src={friendsItems.profileImg}
@@ -210,17 +240,23 @@ const UserMainPage = () => {
 
               <main className="relative w-full z-10 opacity-[0.4] bg-center  bg-no-repeat bg-cover">
                 <div className="absolute w-full z-10 top-0 left-0 custom-background h-full overflow-hidden"></div>
-                <div role="row" className="  z-50  w-full">
-                  <p
-                    className=" inline-block relative z-50 px-5 py-1 bg-opacity-100 rounded-lg bg-orange-300"
-                    style={{
-                      backgroundColor: "#d1f4cc",
-                      color: "black",
-                    }}
-                  >
-                    Helllo
-                  </p>
-                </div>
+                {console.log("hey", Messages)}
+                {Messages.id &&
+                  Messages.map((messageData, index) => {
+                    return (
+                      <div role="row" className="  z-50  w-full">
+                        <p
+                          className=" inline-block relative z-50 px-5 py-1 bg-opacity-100 rounded-lg bg-orange-300"
+                          style={{
+                            backgroundColor: "#d1f4cc",
+                            color: "black",
+                          }}
+                        >
+                          {messageData.message}
+                        </p>
+                      </div>
+                    );
+                  })}
               </main>
 
               <div
@@ -250,16 +286,28 @@ const UserMainPage = () => {
                     type="text"
                     placeholder="Type a message"
                     className="bg-white w-full h-11 px-5 rounded-xl outline-none text-sm text-gray-800"
+                    value={NewUserMessages.message}
+                    onChange={HandleMessageInputChange}
                   />
                 </div>
                 <div className="flex items-center justify-center">
-                  <MicIcon
-                    style={{
-                      color: "#54656f",
-                      fontSize: "30px",
-                      cursor: "pointer",
-                    }}
-                  />
+                  {!NewUserMessages.message ? (
+                    <MicIcon
+                      style={{
+                        color: "#54656f",
+                        fontSize: "30px",
+                        cursor: "pointer",
+                      }}
+                    />
+                  ) : (
+                    <SendIcon
+                      style={{
+                        color: "#54656f",
+                        fontSize: "30px",
+                        cursor: "pointer",
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </section>
