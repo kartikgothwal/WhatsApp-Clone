@@ -14,20 +14,21 @@ import MicIcon from "@mui/icons-material/Mic";
 import "../App.css";
 import { useUserContext } from "./context/UserContext";
 import { useFirebaseContext } from "./context/firebase";
-import { CloseFullscreen } from "@mui/icons-material";
 import SendIcon from "@mui/icons-material/Send";
-import { prettyFormat } from "@testing-library/react";
+
 const UserMainPage = () => {
-  const { GetUser, GetMessages } = useFirebaseContext();
+  const { GetUser, GetMessages, SendMessage } = useFirebaseContext();
   const [CurrentUserData, SetCurrentUserData] = useState({});
   const { UserDetails } = useUserContext();
   const friendChoice = useRef([]);
   const [AllFriends, SetAllFriends] = useState([]);
+  const [Friend, setFriend] = useState({});
   const [Messages, SetMessages] = useState([]);
   const [NewUserMessages, setNewuserMessages] = useState({
     id: "",
     message: "",
   });
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -40,7 +41,6 @@ const UserMainPage = () => {
         alert("Error fetching data:", error);
       }
     }
-
     fetchData();
   }, [UserDetails]);
 
@@ -48,17 +48,42 @@ const UserMainPage = () => {
     friendChoice.current[index] = ref;
   };
   const handleChatRequestClick = (index) => {
+    setFriend(AllFriends[index]);
     GetMessages(SetMessages, AllFriends[index], CurrentUserData);
   };
   const HandleMessageInputChange = (e) => {
     setNewuserMessages((prevData) => {
       return {
-        ...prevData,
         [e.target.name]: e.target.value,
         id: CurrentUserData.id,
       };
     });
   };
+  const HandleSendMessaeBtn = (e) => {
+    e.preventDefault();
+    if (!NewUserMessages.message || !NewUserMessages.id) {
+      return;
+    }
+    const date = new Date();
+    let dateHours = date.getHours();
+    let dateMinute = date.getMinutes();
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((data) => {
+      if (data == date.getHours()) {
+        dateHours = "0" + date.getHours();
+      }
+    });
+
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((data) => {
+      if (data == date.getMinutes()) {
+        dateMinute = "0" + date.getMinutes();
+      }
+    });
+
+    const dateData = dateHours + ":" + dateMinute;
+
+    SendMessage(CurrentUserData, Friend, NewUserMessages, dateData);
+  };
+  console.log("friend", Friend);
   return (
     <>
       {CurrentUserData.id && AllFriends.length ? (
@@ -190,21 +215,21 @@ const UserMainPage = () => {
               }}
             >
               <header
-                className=" z-100  grid grid-cols-[7rem_7rem_repeat(1,1fr)]"
+                className=" z-100  grid grid-cols-[7rem__repeat(1,1fr)_7rem]"
                 style={{
                   background: "#f0f2f5",
                 }}
               >
                 <figure className=" pl-[2rem] w-[5rem] h-full flex items-center justify-center">
                   <img
-                    src="https://pps.whatsapp.net/v/t61.24694-24/369575505_693071492690114_4103489596512533221_n.jpg?stp=dst-jpg_s96x96&ccb=11-4&oh=01_AdRWSVux9RZVqYAGn-KpyzZwe3JHIv4-pOTRLTkrAP_LuA&oe=651444C9&_nc_sid=000000&_nc_cat=106"
+                    src={Friend.profileImg}
                     alt="user_img"
                     className="rounded-[40px] h-[2.8rem]"
                   />
                 </figure>
                 <div className="flex flex-col justify-center ">
-                  <h1>Kartik Gothwal</h1>
-                  <p className="text-gray-500 text-sm">Melllpo</p>
+                  {Friend.name && <h1>{Friend.name}</h1>}
+                  <p className="text-gray-500 text-sm">Today</p>
                 </div>
                 <div className="flex justify-end items-center h-full w-full pr-6 gap-10">
                   <DuoIcon
@@ -238,25 +263,35 @@ const UserMainPage = () => {
                 </div>
               </header>
 
-              <main className="relative w-full z-10 opacity-[0.4] bg-center  bg-no-repeat bg-cover">
-                <div className="absolute w-full z-10 top-0 left-0 custom-background h-full overflow-hidden"></div>
-                {console.log("hey", Messages)}
-                {Messages.id &&
-                  Messages.map((messageData, index) => {
-                    return (
-                      <div role="row" className="  z-50  w-full">
-                        <p
-                          className=" inline-block relative z-50 px-5 py-1 bg-opacity-100 rounded-lg bg-orange-300"
-                          style={{
-                            backgroundColor: "#d1f4cc",
-                            color: "black",
-                          }}
+              <main className="relative w-full   bg-center  bg-no-repeat bg-cover">
+                <div className="absolute w-full top-0  opacity-[0.4] left-0 custom-background h-full overflow-hidden"></div>
+
+                <div className="relative h-full w-full px-10 py-2">
+                  <div className="relative flex items-end flex-col gap-2 h-full w-full">
+                    {Messages.map((messageData, index) => {
+                      console.log(messageData);
+                      return (
+                        <div
+                          key={index}
+                          role="row"
+                          className={`relative z-1000 w-full flex ${
+                            messageData.id == Friend.ID ? "" : "justify-end"
+                          }`}
                         >
-                          {messageData.message}
-                        </p>
-                      </div>
-                    );
-                  })}
+                          <span
+                            className="opacity-100 h-full text-sm inline-block relative px-5 py-1 rounded-md bg-orange-300"
+                            style={{
+                              backgroundColor: "#fefffe",
+                              color: "#111b21",
+                            }}
+                          >
+                            {messageData.message}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </main>
 
               <div
@@ -284,6 +319,7 @@ const UserMainPage = () => {
                 <div className=" justify-center flex items-center ">
                   <input
                     type="text"
+                    name="message"
                     placeholder="Type a message"
                     className="bg-white w-full h-11 px-5 rounded-xl outline-none text-sm text-gray-800"
                     value={NewUserMessages.message}
@@ -306,6 +342,7 @@ const UserMainPage = () => {
                         fontSize: "30px",
                         cursor: "pointer",
                       }}
+                      onClick={HandleSendMessaeBtn}
                     />
                   )}
                 </div>

@@ -18,6 +18,8 @@ import {
   onSnapshot,
   query,
   where,
+  orderBy,
+  serverTimestamp,
 } from "firebase/firestore";
 import { createContext, useContext } from "react";
 
@@ -37,47 +39,55 @@ const Friends = [
     profileImg:
       "https://i.pinimg.com/736x/df/61/a1/df61a19237753b3064071972b3856043.jpg",
     ID: "3TCH2X9mTA8jrtT1iCyn",
+    timestamp: serverTimestamp(),
   },
   {
     name: "Jeff Bezoz",
     profileImg:
       "https://hips.hearstapps.com/hmg-prod/images/jeff-bezos-attends-the-lord-of-the-rings-the-rings-of-power-news-photo-1684851576.jpg?crop=1.00xw:0.861xh;0,0.0205xh&resize=1200:*",
     ID: "eDbEBGwffVRjI0pvoIkD",
+    timestamp: serverTimestamp(),
   },
   {
     name: "Narendra Modi",
     profileImg:
       "https://i1.sndcdn.com/avatars-000647693748-k3ef4g-t500x500.jpg",
     ID: "cnRAKoXsb0J6xvRoo41J",
+    timestamp: serverTimestamp(),
   },
   {
     name: "Mark Zuckerberg",
     profileImg: "https://i.kym-cdn.com/photos/images/newsfeed/002/363/222/a71",
     ID: "ID60NH6goXOx402PsW8i",
+    timestamp: serverTimestamp(),
   },
 ];
 
 //InitialMessages
 const InitialMessages = [
   {
-    id: "",
+    id: "3TCH2X9mTA8jrtT1iCyn",
     message: "Come to Mars with me",
+    date: "12:00",
+    timestamp: serverTimestamp(),
   },
   {
-    id: "",
+    id: "eDbEBGwffVRjI0pvoIkD",
     message: "Don't go with elon",
+    date: "12:00",
+    timestamp: serverTimestamp(),
   },
   {
-    id: "",
+    id: "cnRAKoXsb0J6xvRoo41J",
     message: "Mitro, aache din is loading",
+    date: "12:00",
+    timestamp: serverTimestamp(),
   },
   {
-    id: "",
+    id: "ID60NH6goXOx402PsW8i",
     message: "Trust me, Thread is better than Twitter",
-  },
-  {
-    id: "",
-    message: "Mitro, aache din is loading",
+    date: "12:00",
+    timestamp: serverTimestamp(),
   },
 ];
 //AddingFriends List
@@ -155,7 +165,6 @@ const AccountByGoogle = async (updateUserDetails, navigate) => {
     }
     navigate("/mainpage");
   } catch (error) {
-    console.error(error.message);
     alert(error.message);
   }
 };
@@ -188,6 +197,7 @@ const GetUser = (SetCurrentUserData, UserDetails, SetAllFriends) => {
     CollectionRef,
     where("useremail", "==", UserDetails.useremail)
   );
+
   getDocs(q)
     .then((response) => {
       const data = response.docs.map((items) => {
@@ -223,19 +233,39 @@ const GetMessages = (SetMessages, friendInfo, CurrentUserData) => {
     database,
     `users/${CurrentUserData.id}/friends/${friendInfo.id}/messages`
   );
-  getDocs(CollectionRef)
+  const orderedCollectionRef = query(CollectionRef, orderBy("timestamp"));
+
+  getDocs(orderedCollectionRef)
     .then((response) => {
       const MessageData = response.docs.map((items) => {
         return {
           ...items.data(),
-          id: items.id,
+          messageID: items.id,
         };
       });
+      console.log(MessageData);
       SetMessages(MessageData);
     })
     .catch((error) => {
       alert(error.message);
     });
+};
+
+const SendMessage = (CurrentUserData, Friend, NewUserMessages, dateData) => {
+  console.log("inside");
+  try {
+    const CollectionRef = collection(
+      database,
+      `users/${CurrentUserData.id}/friends/${Friend.id}/messages`
+    );
+    addDoc(CollectionRef, {
+      ...NewUserMessages,
+      timestamp: serverTimestamp(),
+      date: dateData,
+    });
+  } catch (error) {
+    alert(error.message);
+  }
 };
 
 // Initialize Firebase
@@ -256,6 +286,7 @@ const FirebaseProvider = ({ children }) => {
           GetUser,
           GetAllFriends,
           GetMessages,
+          SendMessage,
         }}
       >
         {children}
