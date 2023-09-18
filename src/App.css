@@ -22,3 +22,9 @@
   opacity: 0.4;
   background-color: #efeae2;
 }
+.NoBackground {
+  background-image: url("./images/banner.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+}
