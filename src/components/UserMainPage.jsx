@@ -17,6 +17,7 @@ import { useFirebaseContext } from "./context/firebase";
 import SendIcon from "@mui/icons-material/Send";
 import { database } from "./context/firebase";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { CloseFullscreen } from "@mui/icons-material";
 const UserMainPage = () => {
   const { GetUser, GetMessages, SendMessage, GetLastMessages } =
     useFirebaseContext();
@@ -26,26 +27,32 @@ const UserMainPage = () => {
   const [AllFriends, SetAllFriends] = useState([]);
   const [Friend, setFriend] = useState({});
   const [Messages, SetMessages] = useState([]);
+  const [lastMessages, SetLastMessages] = useState([]);
   const [NewUserMessages, setNewuserMessages] = useState({
     id: "",
     message: "",
   });
-  const [lastMessages, SetLastMessages] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
         await GetUser(SetCurrentUserData, UserDetails, SetAllFriends);
-        // await GetLastMessages(CurrentUserData, AllFriends, setNewuserMessages);
       } catch (error) {
         alert("Error fetching data:", error);
       }
     }
     fetchData();
   }, [UserDetails]);
-  console.log(lastMessages);
+
+  useEffect(() => {
+    if (AllFriends.length && CurrentUserData.id) {
+      GetLastMessages(CurrentUserData, AllFriends, SetLastMessages);
+    }
+  }, [AllFriends, Messages]);
+
   const updateRef = (index) => (ref) => {
     friendChoice.current[index] = ref;
   };
+
   const handleChatRequestClick = (index) => {
     setFriend(AllFriends[index]);
     GetMessages(SetMessages, AllFriends[index], CurrentUserData);
@@ -213,7 +220,7 @@ const UserMainPage = () => {
                             }}
                             className="text-sm"
                           >
-                            Kartik : This is the message
+                            message: {lastMessages.length && lastMessages[index].message}
                           </p>
                         </div>
                         <ExpandMoreIcon

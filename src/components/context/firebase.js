@@ -1,3 +1,4 @@
+import { ArrowForwardIos, ClassSharp } from "@mui/icons-material";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -38,27 +39,27 @@ const Friends = [
     name: "Elon Musk",
     profileImg:
       "https://i.pinimg.com/736x/df/61/a1/df61a19237753b3064071972b3856043.jpg",
-    ID: "3TCH2X9mTA8jrtT1iCyn",
+    thisFriendID: "3TCH2X9mTA8jrtT1iCyn",
     timestamp: serverTimestamp(),
   },
   {
     name: "Jeff Bezoz",
     profileImg:
       "https://hips.hearstapps.com/hmg-prod/images/jeff-bezos-attends-the-lord-of-the-rings-the-rings-of-power-news-photo-1684851576.jpg?crop=1.00xw:0.861xh;0,0.0205xh&resize=1200:*",
-    ID: "eDbEBGwffVRjI0pvoIkD",
+    thisFriendID: "eDbEBGwffVRjI0pvoIkD",
     timestamp: serverTimestamp(),
   },
   {
     name: "Narendra Modi",
     profileImg:
       "https://i1.sndcdn.com/avatars-000647693748-k3ef4g-t500x500.jpg",
-    ID: "cnRAKoXsb0J6xvRoo41J",
+    thisFriendID: "cnRAKoXsb0J6xvRoo41J",
     timestamp: serverTimestamp(),
   },
   {
     name: "Mark Zuckerberg",
     profileImg: "https://i.kym-cdn.com/photos/images/newsfeed/002/363/222/a71",
-    ID: "ID60NH6goXOx402PsW8i",
+    thisFriendID: "ID60NH6goXOx402PsW8i",
     timestamp: serverTimestamp(),
   },
 ];
@@ -216,25 +217,35 @@ const GetUser = (
       alert(error.message);
     });
 };
-const GetLastMessages = (CurrentUserData, AllFriends, setNewuserMessages) => {
+const GetLastMessages = async (
+  CurrentUserData,
+  AllFriends,
+  SetLastMessages
+) => {
   try {
-    AllFriends.map((Friend) => {
-      const CollectionRef = collection(
-        database,
-        `users/${CurrentUserData.id}/friends/${Friend.id}/message`
-      );
-      getDocs(CollectionRef).then((response) => {
-        setNewuserMessages(
-          response.docs.map((items) => {
-            return { ...items.data() };
-          })
+    const MessageArray = await Promise.all(
+      AllFriends.map(async (Friend) => {
+        const CollectionRef = collection(
+          database,
+          `users/${CurrentUserData.id}/friends/${Friend.id}/messages`
         );
-      });
-    });
+        const orderedCollectionRef = query(CollectionRef, orderBy("timestamp"));
+
+        const response = await getDocs(orderedCollectionRef);
+        const MessagesData = response.docs.map((items) => ({
+          ...items.data(),
+        }));
+        const LastElement = MessagesData.pop();
+        return LastElement;
+      })
+    );
+
+    SetLastMessages(MessageArray);
   } catch (error) {
     alert(error.message);
   }
 };
+
 const GetAllFriends = async (CurrentUserData, SetAllFriends) => {
   const CollectionRef = collection(
     database,
@@ -283,6 +294,7 @@ const SendMessage = (CurrentUserData, Friend, NewUserMessages, dateData) => {
     );
     addDoc(CollectionRef, {
       ...NewUserMessages,
+      id: Friend.id,
       timestamp: serverTimestamp(),
       date: dateData,
     });
@@ -310,6 +322,7 @@ const FirebaseProvider = ({ children }) => {
           GetAllFriends,
           GetMessages,
           SendMessage,
+          GetLastMessages,
         }}
       >
         {children}
