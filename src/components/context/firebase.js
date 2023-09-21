@@ -11,12 +11,8 @@ import {
   doc,
   getFirestore,
   collection,
-  getDoc,
   getDocs,
   addDoc,
-  deleteDoc,
-  updateDoc,
-  onSnapshot,
   query,
   where,
   orderBy,
@@ -74,7 +70,7 @@ const InitialMessages = [
   },
   {
     id: "eDbEBGwffVRjI0pvoIkD",
-    message: "Don't go with elon",
+    message: "Don't go with Elon",
     date: "12:00",
     timestamp: serverTimestamp(),
   },
@@ -86,7 +82,7 @@ const InitialMessages = [
   },
   {
     id: "ID60NH6goXOx402PsW8i",
-    message: "Trust me, Thread is better than Twitter",
+    message: "Trust me, Thread is better than Twitter, Don't listen to Elon",
     date: "12:00",
     timestamp: serverTimestamp(),
   },
@@ -137,7 +133,7 @@ const CreateUser = async (userdata, updateUserDetails, navigate) => {
       useremail: user.email,
       usertoken: user.idToken,
     });
-    AddFriendsListToUser(user, userdata.username);
+    await AddFriendsListToUser(user, userdata.username);
     navigate("/mainpage");
   } catch (error) {
     alert(error.message);
@@ -159,7 +155,6 @@ const AccountByGoogle = async (updateUserDetails, navigate) => {
 
     const q = query(UserCollectionRef, where("useremail", "==", user.email));
     const querySnapshot = await getDocs(q);
-
     const choice = querySnapshot.docs.length === 0;
     if (choice) {
       await AddFriendsListToUser(user, user.fullName);
@@ -192,12 +187,7 @@ const UserLogin = async (userData, updateUserDetails, navigate) => {
     });
 };
 
-const GetUser = (
-  SetCurrentUserData,
-  UserDetails,
-  SetAllFriends,
-  SetLastMessages
-) => {
+const GetUser = (SetCurrentUserData, UserDetails, SetAllFriends) => {
   const CollectionRef = collection(database, "users");
   const q = query(
     CollectionRef,
@@ -210,6 +200,7 @@ const GetUser = (
         return { ...items.data(), id: items.id };
       });
       const user = data[0];
+
       GetAllFriends(user, SetAllFriends);
       SetCurrentUserData(user);
     })
@@ -246,17 +237,18 @@ const GetLastMessages = async (
   }
 };
 
-const GetAllFriends = async (CurrentUserData, SetAllFriends) => {
+const GetAllFriends = (CurrentUserData, SetAllFriends) => {
   const CollectionRef = collection(
     database,
     `users/${CurrentUserData.id}/friends`
   );
-  await getDocs(CollectionRef)
+  getDocs(CollectionRef)
     .then((response) => {
-      const friends = response.docs.map((items) => {
-        return { ...items.data(), id: items.id };
-      });
-      SetAllFriends(friends);
+      SetAllFriends(
+        response.docs.map((items) => {
+          return { ...items.data(), id: items.id };
+        })
+      );
     })
     .catch((error) => {
       alert(error.message);

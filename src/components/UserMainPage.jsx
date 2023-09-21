@@ -17,10 +17,10 @@ import { useFirebaseContext } from "./context/firebase";
 import SendIcon from "@mui/icons-material/Send";
 import { database } from "./context/firebase";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { CloseFullscreen } from "@mui/icons-material";
 const UserMainPage = () => {
   const { GetUser, GetMessages, SendMessage, GetLastMessages } =
     useFirebaseContext();
+  const chatContainerRef = useRef(null);
   const [CurrentUserData, SetCurrentUserData] = useState({});
   const { UserDetails } = useUserContext();
   const friendChoice = useRef([]);
@@ -112,9 +112,9 @@ const UserMainPage = () => {
 
   return (
     <>
-      {CurrentUserData.id && AllFriends.length ? (
+      {CurrentUserData.id || AllFriends.length ? (
         <section className="h-screen p-8 bg-gray-200 ">
-          <main className=" h-full shadow-[0px_2px_2px_rgba(11,20,26)] grid grid-cols-[30%_repeat(1,1fr)] ">
+          <main className="overflow-hidden h-full shadow-[0px_2px_2px_rgba(11,20,26)] grid grid-cols-[30%_repeat(1,1fr)] ">
             <section className="h-full grid bg-white grid-rows-[59px_50px_repeat(1,1fr)] overflow-hidden">
               <header
                 className="h-full grid grid-cols-[5rem_repeat(1,1fr)]"
@@ -211,16 +211,19 @@ const UserMainPage = () => {
                           className="rounded-[40px] h-[3.5rem] w-[3.5rem] overflow-hidden"
                         />
                       </figure>
-                      <div className="border-y-[1px] flex items-center w-full h-full border-collapse">
-                        <div className="  h-full flex flex-col justify-center pl-2 w-full">
-                          <h1 className="text-left">{friendsItems.name}</h1>
+                      <div className="border-y-[1px] flex items-center w-full h-full border-collapse overflow-hidden">
+                        <div className="h-full flex flex-col justify-center pl-2 w-full">
+                          <h1 className="text-left h-[2rem] w-[21rem]">
+                            {friendsItems.name}
+                          </h1>
                           <p
                             style={{
                               color: "#54656f",
                             }}
-                            className="text-sm"
+                            className="text-sm  h-[1.5rem] w-[21rem] overflow-hidden"
                           >
-                            message: {lastMessages.length && lastMessages[index].message}
+                            message:{" "}
+                            {lastMessages.length && lastMessages[index].message}
                           </p>
                         </div>
                         <ExpandMoreIcon
@@ -235,7 +238,7 @@ const UserMainPage = () => {
               </div>
             </section>
             <section
-              className="h-full relative"
+              className="h-full relative scroller_property"
               style={{
                 background: "#efeae2",
               }}
@@ -291,32 +294,40 @@ const UserMainPage = () => {
                     </div>
                   </header>
 
-                  <main className="relative w-full   bg-center  bg-no-repeat bg-cover">
-                    <div className="absolute w-full top-0  opacity-[0.4] left-0 custom-background h-full overflow-hidden"></div>
+                  <main
+                    ref={chatContainerRef}
+                    className="relative w-full h-full overflow-auto scroller_property bg-center  bg-no-repeat bg-cover"
+                  >
+                    <div className="absolute w-full  top-0  opacity-[0.4] left-0 custom-background h-full overflow-hidden"></div>
 
-                    <div className="relative h-full w-full px-10 py-2">
+                    <div className="overflow-auto relative h-[34rem] w-full px-10 py-2 scroller_property">
                       <div className="relative flex items-end flex-col gap-2 h-full w-full">
-                        {Messages.map((messageData, index) => {
-                          return (
-                            <div
-                              key={index}
-                              role="row"
-                              className={`relative z-1000 w-full flex ${
-                                messageData.id == Friend.ID ? "" : "justify-end"
-                              }`}
-                            >
-                              <span
-                                className="opacity-100 h-full text-sm inline-block relative px-5 py-1 rounded-md bg-orange-300"
-                                style={{
-                                  backgroundColor: "#fefffe",
-                                  color: "#111b21",
-                                }}
+                      
+                        {Messages.length &&
+                          Messages.map((messageData, index) => {
+                            return (
+                              <div
+                                key={index}
+                                role="row"
+                                className={`relative z-1000 w-full  flex ${
+                                  messageData.id == Friend.id
+                                    ? "justify-end"
+                                    : "justify-start"
+                                }`}
                               >
-                                {messageData.message}
-                              </span>
-                            </div>
-                          );
-                        })}
+                                <span
+                                  className="opacity-100 max-w-[35rem] h-full text-sm inline-block relative px-5 py-1 rounded-md bg-orange-300"
+                                  style={{
+                                    backgroundColor: "#fefffe",
+                                    color: "#111b21",
+                                  }}
+                                >
+                                   
+                                  {messageData.message}
+                                </span>
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
                   </main>
