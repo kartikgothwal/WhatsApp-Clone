@@ -10,8 +10,8 @@ const SignInPage = () => {
   };
   return (
     <>
-      <section className="p-[3rem] h-screen bg-emerald-200 overflow-hidden">
-        <div className=" shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden rounded-md bg-white h-full grid grid-cols-[30rem_1fr] ">
+      <section className="sm:p-14 w-screen h-screen bg-emerald-200 overflow-hidden">
+        <div className="sm:rounded-lg md:grid-cols-[30rem_repeat(1,1fr)] xl:grid-cols-[30rem_repeat(1,1fr)]  sm:grid sm:grid-cols-[22rem_repeat(1,1fr)] shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden  bg-emerald-100 h-full  ">
           <main className=" grid grid-rows-[8rem_repeat(1,1fr)]">
             <header className=" bg-zinc-600 text-white grid grid-rows-1 items-center justify-center ">
               <div className=" flex justify-center">
@@ -49,12 +49,12 @@ const SignInPage = () => {
                   Sign up
                 </button>
               </div>
-              <form className=" grid py-7 px-16 font-mycustomfontRubik grid-rows-[4rem_4rem_4rem_4rem] gap-3 items-center justify-center h-full ">
+              <form className=" grid py-7 pl-4 pr-8 font-mycustomfontRubik grid-rows-[4rem_4rem_4rem_4rem] gap-3 items-center justify-center h-full ">
                 {btnChoice === "signup" ? <SignUp /> : <Login />}
               </form>
             </main>
           </main>
-          <aside className="flex items-center bg-orange-50">
+          <aside className="hidden sm:flex items-center bg-orange-50">
             <img src={FrontImg} alt="cover" className="bg-contain bg-center" />
           </aside>
         </div>

@@ -32,6 +32,8 @@ const UserMainPage = () => {
     id: "",
     message: "",
   });
+  const [ChatdisplayVal, SetChatdisplayVal] = useState(false);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -54,6 +56,7 @@ const UserMainPage = () => {
   };
 
   const handleChatRequestClick = (index) => {
+    SetChatdisplayVal(!ChatdisplayVal);
     setFriend(AllFriends[index]);
     GetMessages(SetMessages, AllFriends[index], CurrentUserData);
   };
@@ -113,11 +116,17 @@ const UserMainPage = () => {
   return (
     <>
       {CurrentUserData.id || AllFriends.length ? (
-        <section className="h-screen p-8 bg-gray-200 ">
-          <main className="overflow-hidden h-full shadow-[0px_2px_2px_rgba(11,20,26)] grid grid-cols-[30%_repeat(1,1fr)] ">
+        <section className="h-screen sm:p-8 bg-gray-200 ">
+          <main
+            className={`overflow-hidden h-full shadow-[0px_2px_2px_rgba(11,20,26)] grid ${
+              ChatdisplayVal
+                ? "grid-cols-[0%_repeat(1,1fr)]"
+                : "grid-cols-[100%_repeat(1,1fr)]"
+            }     sm:grid-cols-[50%_repeat(1,1fr)] md:grid-cols-[50%_repeat(1,1fr)] lg:md:grid-cols-[30%_repeat(1,1fr)]`}
+          >
             <section className="h-full grid bg-white grid-rows-[59px_50px_repeat(1,1fr)] overflow-hidden">
               <header
-                className="h-full grid grid-cols-[5rem_repeat(1,1fr)]"
+                className="h-full grid grid-cols-[4rem_repeat(1,1fr)]"
                 style={{
                   background: "#f0f2f5",
                 }}
@@ -129,7 +138,7 @@ const UserMainPage = () => {
                     className="rounded-full h-11 w-11 cursor-pointer"
                   />
                 </div>
-                <div className="flex justify-end items-center gap-6 pr-3">
+                <div className="flex justify-evenly sm:justify-end items-center gap-6 pr-3">
                   <GroupsIcon
                     style={{
                       color: "#54656f",
@@ -163,13 +172,13 @@ const UserMainPage = () => {
               </header>
               <aside className="border-b-[1px] justify-center items-center pl-3  pr-0 h-full grid grid-cols-[repeat(1,1fr)_3rem]">
                 <div
-                  className=" h-[2.5rem] rounded-[8px]  pl-4"
+                  className=" h-[2.5rem] rounded-[8px] flex items-center px-1  "
                   style={{
                     background: "#f0f2f5",
                   }}
                 >
                   <SearchIcon
-                    className="cursor-pointer text-gray-500"
+                    className="cursor-pointer  text-gray-500"
                     style={{
                       fontSize: "19px",
                     }}
@@ -199,7 +208,7 @@ const UserMainPage = () => {
                     <article
                       key={index}
                       ref={updateRef(index)}
-                      className="w-full flex h-[72px] cursor-pointer hover:bg-gray-100"
+                      className="w-full flex h-[72px] cursor-pointer  hover:bg-gray-100"
                       onClick={() => {
                         handleChatRequestClick(index);
                       }}
@@ -211,16 +220,16 @@ const UserMainPage = () => {
                           className="rounded-[40px] h-[3.5rem] w-[3.5rem] overflow-hidden"
                         />
                       </figure>
-                      <div className="border-y-[1px] flex items-center w-full h-full border-collapse overflow-hidden">
+                      <div className="border-y-[1px] grid grid-cols-[18rem_repeat(1,1fr)] md:grid-cols-[20rem_repeat(1,1fr)]  items-center w-full h-full border-collapse overflow-hidden">
                         <div className="h-full flex flex-col justify-center pl-2 w-full">
-                          <h1 className="text-left h-[2rem] w-[21rem]">
+                          <h1 className="text-left h-[2rem] w-full">
                             {friendsItems.name}
                           </h1>
                           <p
                             style={{
                               color: "#54656f",
                             }}
-                            className="text-sm  h-[1.5rem] w-[21rem] overflow-hidden"
+                            className="text-sm truncate   h-[1.5rem] w-full overflow-hidden"
                           >
                             message:{" "}
                             {lastMessages.length && lastMessages[index].message}
@@ -238,20 +247,20 @@ const UserMainPage = () => {
               </div>
             </section>
             <section
-              className="h-full relative scroller_property"
+              className="h-full relative scroller_property "
               style={{
                 background: "#efeae2",
               }}
             >
               {Friend.id ? (
-                <div className="h-full relative grid grid-rows-[3.67rem_repeat(1,1fr)_4rem] ">
+                <div className="h-full relative grid grid-rows-[3.67rem_repeat(1,1fr)_7rem] ">
                   <header
-                    className=" z-100 grid grid-cols-[7rem__repeat(1,1fr)_7rem]"
+                    className=" z-100 grid  grid-cols-[4rem__repeat(1,1fr)_7rem] lg:grid-cols-[7rem__repeat(1,1fr)_7rem]"
                     style={{
                       background: "#f0f2f5",
                     }}
                   >
-                    <figure className=" pl-[2rem] w-[5rem] h-full flex items-center justify-center">
+                    <figure className="pl-1 lg:pl-[2rem] w-[3rem] lg:w-[5rem] h-full flex items-center justify-center">
                       <img
                         src={Friend.profileImg}
                         alt="user_img"
@@ -262,16 +271,26 @@ const UserMainPage = () => {
                       {Friend.name && <h1>{Friend.name}</h1>}
                       <p className="text-gray-500 text-sm">Today</p>
                     </div>
-                    <div className="flex justify-end items-center h-full w-full pr-6 gap-10">
+                    <div className="block sm:hidden p-3">
+                      <button
+                        className=" bg-black text-white font-mycustomfontRubik flex justify-center items-center h-8 rounded-lg w-20"
+                        onClick={() => {
+                          SetChatdisplayVal(!ChatdisplayVal);
+                        }}
+                      >
+                        Go Back
+                      </button>
+                    </div>
+                    <div className="hidden sm:flex justify-end items-center h-full w-full pr-6 gap-3 lg:gap-10">
                       <DuoIcon
                         style={{
                           color: "#54656f",
                           // color: "#ffffff",
-                          fontSize: "40px",
+                          fontSize: "32px",
                           cursor: "pointer",
                           border: "1px solid #54656f",
                           padding: "4px 15px ",
-                          width: "5rem",
+                          width: "4rem",
                           borderRadius: "20px",
                         }}
                       />
@@ -284,6 +303,7 @@ const UserMainPage = () => {
                         }}
                       />
                       <MoreVertIcon
+                        className="hidden sm:block"
                         style={{
                           color: "#54656f",
                           // color: "#ffffff",
@@ -300,9 +320,8 @@ const UserMainPage = () => {
                   >
                     <div className="absolute w-full  top-0  opacity-[0.4] left-0 custom-background h-full overflow-hidden"></div>
 
-                    <div className="overflow-auto relative h-[34rem] w-full px-10 py-2 scroller_property">
+                    <div className="overflow-auto relative h-[45rem] md:h-[40rem] 2xl:h-[34rem] w-full px-5 md:px-10 py-2 scroller_property">
                       <div className="relative flex items-end flex-col gap-2 h-full w-full">
-                      
                         {Messages.length &&
                           Messages.map((messageData, index) => {
                             return (
@@ -315,16 +334,15 @@ const UserMainPage = () => {
                                     : "justify-start"
                                 }`}
                               >
-                                <span
-                                  className="opacity-100 max-w-[35rem] h-full text-sm inline-block relative px-5 py-1 rounded-md bg-orange-300"
+                                <p
+                                  className="opacity-100 break-words max-w-[15rem] lg:max-w-[35rem] h-full text-sm inline-block relative px-5 py-1 rounded-md bg-orange-300"
                                   style={{
                                     backgroundColor: "#fefffe",
                                     color: "#111b21",
                                   }}
                                 >
-                                   
                                   {messageData.message}
-                                </span>
+                                </p>
                               </div>
                             );
                           })}
@@ -333,12 +351,12 @@ const UserMainPage = () => {
                   </main>
 
                   <div
-                    className="grid grid-cols-[7rem_repeat(1,1fr)_5rem]"
+                    className="grid grid-cols-[4rem_repeat(1,1fr)_3rem]  items-start pt-2 md:grid-cols-[7rem_repeat(1,1fr)_5rem]"
                     style={{
                       background: "#f0f2f5",
                     }}
                   >
-                    <div className="flex justify-evenly items-center ">
+                    <div className="flex justify-evenly items-center h-12 ">
                       <MoodIcon
                         style={{
                           color: "#54656f",
@@ -364,7 +382,7 @@ const UserMainPage = () => {
                         onChange={HandleMessageInputChange}
                       />
                     </div>
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center  h-12 ">
                       {!NewUserMessages.message ? (
                         <MicIcon
                           style={{
@@ -387,7 +405,7 @@ const UserMainPage = () => {
                   </div>
                 </div>
               ) : (
-                <div className="h-full w-full NoBackground"></div>
+                <div className="bg-slate-50 hidden sm:block  h-full w-full NoBackground"></div>
               )}
             </section>
           </main>
