@@ -320,7 +320,7 @@ const UserMainPage = () => {
                   >
                     <div className="absolute w-full  top-0  opacity-[0.4] left-0 custom-background h-full overflow-hidden"></div>
 
-                    <div className="overflow-auto relative h-[45rem] md:h-[40rem] 2xl:h-[34rem] w-full px-5 md:px-10 py-2 scroller_property">
+                    <div className="overflow-auto relative h-[42rem] md:h-[40rem] 2xl:h-[34rem] w-full px-5 md:px-10 py-2 scroller_property">
                       <div className="relative flex items-end flex-col gap-2 h-full w-full">
                         {Messages.length &&
                           Messages.map((messageData, index) => {
